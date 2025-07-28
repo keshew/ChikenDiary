@@ -1,21 +1,30 @@
-//
-//  ContentView.swift
-//  chikenRoadProj
-//
-//  Created by Артём Коротков on 29.07.2025.
-//
-
 import SwiftUI
 
 struct ContentView: View {
+    @StateObject private var diaryManager = ChickenDiaryManager()
+    
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        TabView {
+            ChickenGroupsView()
+                .tabItem {
+                    Image(systemName: "house.fill")
+                    Text("My Chickens")
+                }
+            
+            DiaryListView()
+                .tabItem {
+                    Image(systemName: "book.fill")
+                    Text("Diary")
+                }
+            
+            StatisticsView()
+                .tabItem {
+                    Image(systemName: "chart.bar.fill")
+                    Text("Statistics")
+                }
         }
-        .padding()
+        .environmentObject(diaryManager)
+        .accentColor(.orange)
     }
 }
 
