@@ -30,14 +30,14 @@ enum Mood: String, CaseIterable, Codable {
     }
 }
 
-struct Chicken: Identifiable, Codable {
+struct Pigeon: Identifiable, Codable {
     let id = UUID()
     var name: String
     var color: String
     var breed: String
     var dateAdded: Date
     
-    init(name: String, color: String = "Brown", breed: String = "Unknown") {
+    init(name: String, color: String = "Blue Bar", breed: String = "Unknown") {
         self.name = name
         self.color = color
         self.breed = breed
@@ -45,15 +45,15 @@ struct Chicken: Identifiable, Codable {
     }
 }
 
-struct ChickenGroup: Identifiable, Codable {
+struct PigeonGroup: Identifiable, Codable {
     let id = UUID()
     var name: String
-    var chickens: [Chicken]
+    var pigeons: [Pigeon]
     var dateCreated: Date
     
-    init(name: String, chickens: [Chicken] = []) {
+    init(name: String, pigeons: [Pigeon] = []) {
         self.name = name
-        self.chickens = chickens
+        self.pigeons = pigeons
         self.dateCreated = Date()
     }
 }
@@ -61,57 +61,57 @@ struct ChickenGroup: Identifiable, Codable {
 struct DiaryEntry: Identifiable, Codable {
     let id = UUID()
     var date: Date
-    var chickenGroupId: UUID
+    var pigeonGroupId: UUID
     var mood: Mood
-    var eggsCount: Int
+    var chicksCount: Int
     var notes: String
     
-    init(chickenGroupId: UUID, mood: Mood, eggsCount: Int, notes: String) {
+    init(pigeonGroupId: UUID, mood: Mood, chicksCount: Int, notes: String) {
         self.date = Date()
-        self.chickenGroupId = chickenGroupId
+        self.pigeonGroupId = pigeonGroupId
         self.mood = mood
-        self.eggsCount = eggsCount
+        self.chicksCount = chicksCount
         self.notes = notes
     }
 }
 
 // MARK: - Data Manager
 
-class ChickenDiaryManager: ObservableObject {
-    @Published var chickenGroups: [ChickenGroup] = []
+class PigeonDiaryManager: ObservableObject {
+    @Published var pigeonGroups: [PigeonGroup] = []
     @Published var diaryEntries: [DiaryEntry] = []
     
-    private let groupsKey = "ChickenGroups"
+    private let groupsKey = "PigeonGroups"
     private let entriesKey = "DiaryEntries"
     
     init() {
         loadData()
     }
     
-    // MARK: - Chicken Groups Management
+    // MARK: - Pigeon Groups Management
     
-    func addChickenGroup(_ group: ChickenGroup) {
-        chickenGroups.append(group)
+    func addPigeonGroup(_ group: PigeonGroup) {
+        pigeonGroups.append(group)
         saveData()
     }
     
-    func updateChickenGroup(_ group: ChickenGroup) {
-        if let index = chickenGroups.firstIndex(where: { $0.id == group.id }) {
-            chickenGroups[index] = group
+    func updatePigeonGroup(_ group: PigeonGroup) {
+        if let index = pigeonGroups.firstIndex(where: { $0.id == group.id }) {
+            pigeonGroups[index] = group
             saveData()
         }
     }
     
-    func deleteChickenGroup(_ group: ChickenGroup) {
-        chickenGroups.removeAll { $0.id == group.id }
+    func deletePigeonGroup(_ group: PigeonGroup) {
+        pigeonGroups.removeAll { $0.id == group.id }
         // Also delete related diary entries
-        diaryEntries.removeAll { $0.chickenGroupId == group.id }
+        diaryEntries.removeAll { $0.pigeonGroupId == group.id }
         saveData()
     }
     
-    func addChickenToGroup(_ chicken: Chicken, groupId: UUID) {
-        if let index = chickenGroups.firstIndex(where: { $0.id == groupId }) {
-            chickenGroups[index].chickens.append(chicken)
+    func addPigeonToGroup(_ pigeon: Pigeon, groupId: UUID) {
+        if let index = pigeonGroups.firstIndex(where: { $0.id == groupId }) {
+            pigeonGroups[index].pigeons.append(pigeon)
             saveData()
         }
     }
@@ -129,14 +129,14 @@ class ChickenDiaryManager: ObservableObject {
     }
     
     func getEntriesForGroup(_ groupId: UUID) -> [DiaryEntry] {
-        return diaryEntries.filter { $0.chickenGroupId == groupId }
+        return diaryEntries.filter { $0.pigeonGroupId == groupId }
             .sorted { $0.date > $1.date }
     }
     
     // MARK: - Statistics
     
-    func getTotalEggs() -> Int {
-        return diaryEntries.reduce(0) { $0 + $1.eggsCount }
+    func getTotalChicks() -> Int {
+        return diaryEntries.reduce(0) { $0 + $1.chicksCount }
     }
     
     func getAverageMood() -> Mood {
@@ -169,7 +169,7 @@ class ChickenDiaryManager: ObservableObject {
     // MARK: - Data Persistence
     
     private func saveData() {
-        if let groupsData = try? JSONEncoder().encode(chickenGroups) {
+        if let groupsData = try? JSONEncoder().encode(pigeonGroups) {
             UserDefaults.standard.set(groupsData, forKey: groupsKey)
         }
         
@@ -180,8 +180,8 @@ class ChickenDiaryManager: ObservableObject {
     
     private func loadData() {
         if let groupsData = UserDefaults.standard.data(forKey: groupsKey),
-           let groups = try? JSONDecoder().decode([ChickenGroup].self, from: groupsData) {
-            chickenGroups = groups
+           let groups = try? JSONDecoder().decode([PigeonGroup].self, from: groupsData) {
+            pigeonGroups = groups
         }
         
         if let entriesData = UserDefaults.standard.data(forKey: entriesKey),

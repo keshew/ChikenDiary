@@ -1,24 +1,24 @@
 import SwiftUI
 
-struct ChickenGroupsView: View {
-    @EnvironmentObject var diaryManager: ChickenDiaryManager
+struct PigeonGroupsView: View {
+    @EnvironmentObject var diaryManager: PigeonDiaryManager
     @State private var showingAddGroup = false
-    @State private var selectedGroup: ChickenGroup?
+    @State private var selectedGroup: PigeonGroup?
     
     var body: some View {
         NavigationView {
             List {
-                if diaryManager.chickenGroups.isEmpty {
+                if diaryManager.pigeonGroups.isEmpty {
                     VStack(spacing: 20) {
                         Image(systemName: "house.fill")
                             .font(.system(size: 60))
                             .foregroundColor(.orange)
                         
-                        Text("No Chicken Groups Yet!")
+                        Text("No Pigeon Groups Yet!")
                             .font(.title2)
                             .fontWeight(.semibold)
                         
-                        Text("Tap the + button to create your first chicken group and start your diary!")
+                        Text("Tap the + button to create your first pigeon group and start your diary!")
                             .multilineTextAlignment(.center)
                             .foregroundColor(.secondary)
                         
@@ -39,15 +39,15 @@ struct ChickenGroupsView: View {
                     .padding()
                     .listRowBackground(Color.clear)
                 } else {
-                    ForEach(diaryManager.chickenGroups) { group in
+                    ForEach(diaryManager.pigeonGroups) { group in
                         NavigationLink(destination: GroupDetailView(group: group)) {
-                            ChickenGroupRow(group: group)
+                            PigeonGroupRow(group: group)
                         }
                     }
                     .onDelete(perform: deleteGroups)
                 }
             }
-            .navigationTitle("My Chickens")
+            .navigationTitle("My Pigeons")
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: {
@@ -65,13 +65,13 @@ struct ChickenGroupsView: View {
     
     private func deleteGroups(offsets: IndexSet) {
         for index in offsets {
-            diaryManager.deleteChickenGroup(diaryManager.chickenGroups[index])
+            diaryManager.deletePigeonGroup(diaryManager.pigeonGroups[index])
         }
     }
 }
 
-struct ChickenGroupRow: View {
-    let group: ChickenGroup
+struct PigeonGroupRow: View {
+    let group: PigeonGroup
     
     var body: some View {
         HStack {
@@ -86,7 +86,7 @@ struct ChickenGroupRow: View {
                 Text(group.name)
                     .font(.headline)
                 
-                Text("\(group.chickens.count) chicken\(group.chickens.count == 1 ? "" : "s")")
+                Text("\(group.pigeons.count) pigeon\(group.pigeons.count == 1 ? "" : "s")")
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
@@ -102,10 +102,10 @@ struct ChickenGroupRow: View {
 
 struct AddGroupView: View {
     @Environment(\.dismiss) var dismiss
-    @EnvironmentObject var diaryManager: ChickenDiaryManager
+    @EnvironmentObject var diaryManager: PigeonDiaryManager
     @State private var groupName = ""
-    @State private var showingAddChicken = false
-    @State private var chickens: [Chicken] = []
+    @State private var showingAddPigeon = false
+    @State private var pigeons: [Pigeon] = []
     
     var body: some View {
         NavigationView {
@@ -114,37 +114,37 @@ struct AddGroupView: View {
                     TextField("Group Name", text: $groupName)
                 }
                 
-                Section(header: Text("Chickens")) {
-                    if chickens.isEmpty {
+                Section(header: Text("Pigeons")) {
+                    if pigeons.isEmpty {
                         HStack {
                             Image(systemName: "plus.circle")
                                 .foregroundColor(.orange)
-                            Text("Add your first chicken")
+                            Text("Add your first pigeon")
                                 .foregroundColor(.secondary)
                         }
                         .onTapGesture {
-                            showingAddChicken = true
+                            showingAddPigeon = true
                         }
                     } else {
-                        ForEach(chickens) { chicken in
+                        ForEach(pigeons) { pigeon in
                             HStack {
                                 Image(systemName: "bird.fill")
                                     .foregroundColor(.orange)
-                                Text(chicken.name)
+                                Text(pigeon.name)
                                 Spacer()
-                                Text(chicken.breed)
+                                Text(pigeon.breed)
                                     .font(.caption)
                                     .foregroundColor(.secondary)
                             }
                         }
-                        .onDelete(perform: deleteChickens)
+                        .onDelete(perform: deletePigeons)
                         
                         Button(action: {
-                            showingAddChicken = true
+                            showingAddPigeon = true
                         }) {
                             HStack {
                                 Image(systemName: "plus.circle")
-                                Text("Add Another Chicken")
+                                Text("Add Another Pigeon")
                             }
                         }
                     }
@@ -161,42 +161,42 @@ struct AddGroupView: View {
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Save") {
-                        let newGroup = ChickenGroup(name: groupName, chickens: chickens)
-                        diaryManager.addChickenGroup(newGroup)
+                        let newGroup = PigeonGroup(name: groupName, pigeons: pigeons)
+                        diaryManager.addPigeonGroup(newGroup)
                         dismiss()
                     }
                     .disabled(groupName.isEmpty)
                 }
             }
-            .sheet(isPresented: $showingAddChicken) {
-                AddChickenView { chicken in
-                    chickens.append(chicken)
+            .sheet(isPresented: $showingAddPigeon) {
+                AddPigeonView { pigeon in
+                    pigeons.append(pigeon)
                 }
             }
         }
     }
     
-    private func deleteChickens(offsets: IndexSet) {
-        chickens.remove(atOffsets: offsets)
+    private func deletePigeons(offsets: IndexSet) {
+        pigeons.remove(atOffsets: offsets)
     }
 }
 
-struct AddChickenView: View {
+struct AddPigeonView: View {
     @Environment(\.dismiss) var dismiss
-    @State private var chickenName = ""
-    @State private var selectedColor = "Brown"
+    @State private var pigeonName = ""
+    @State private var selectedColor = "Blue Bar"
     @State private var selectedBreed = "Unknown"
     
-    let onSave: (Chicken) -> Void
+    let onSave: (Pigeon) -> Void
     
-    private let colors = ["Brown", "White", "Black", "Red", "Golden", "Spotted"]
-    private let breeds = ["Unknown", "Rhode Island Red", "Leghorn", "Plymouth Rock", "Sussex", "Orpington", "Wyandotte"]
+    private let colors = ["Blue Bar", "Checker", "Red", "Spread", "White", "Black"]
+    private let breeds = ["Unknown", "Homing", "Racing", "Fantail", "King", "Modena", "Tumbler"]
     
     var body: some View {
         NavigationView {
             Form {
-                Section(header: Text("Chicken Information")) {
-                    TextField("Chicken Name", text: $chickenName)
+                Section(header: Text("Pigeon Information")) {
+                    TextField("Pigeon Name", text: $pigeonName)
                     
                     Picker("Color", selection: $selectedColor) {
                         ForEach(colors, id: \.self) { color in
@@ -211,7 +211,7 @@ struct AddChickenView: View {
                     }
                 }
             }
-            .navigationTitle("Add Chicken")
+            .navigationTitle("Add Pigeon")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
@@ -222,18 +222,64 @@ struct AddChickenView: View {
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Save") {
-                        let chicken = Chicken(name: chickenName, color: selectedColor, breed: selectedBreed)
-                        onSave(chicken)
+                        let pigeon = Pigeon(name: pigeonName, color: selectedColor, breed: selectedBreed)
+                        onSave(pigeon)
                         dismiss()
                     }
-                    .disabled(chickenName.isEmpty)
+                    .disabled(pigeonName.isEmpty)
                 }
             }
         }
     }
 }
 
+//struct AddPigeonView: View {
+//    @Environment(\.dismiss) var dismiss
+//    @State private var pigeonName = ""
+//    @State private var selectedColor = "Blue Bar"
+//    @State private var selectedBreed = "Unknown"
+//    let onSave: (Pigeon) -> Void
+//    private let colors = ["Blue Bar", "Checker", "Red", "Spread", "White", "Black"]
+//    private let breeds = ["Unknown", "Homing", "Racing", "Fantail", "King", "Modena", "Tumbler"]
+//    var body: some View {
+//        NavigationView {
+//            Form {
+//                Section(header: Text("Pigeon Information")) {
+//                    TextField("Pigeon Name", text: $pigeonName)
+//                    Picker("Color", selection: $selectedColor) {
+//                        ForEach(colors, id: \.self) { color in
+//                            Text(color).tag(color)
+//                        }
+//                    }
+//                    Picker("Breed", selection: $selectedBreed) {
+//                        ForEach(breeds, id: \.self) { breed in
+//                            Text(breed).tag(breed)
+//                        }
+//                    }
+//                }
+//            }
+//            .navigationTitle("Add Pigeon")
+//            .navigationBarTitleDisplayMode(.inline)
+//            .toolbar {
+//                ToolbarItem(placement: .navigationBarLeading) {
+//                    Button("Cancel") {
+//                        dismiss()
+//                    }
+//                }
+//                ToolbarItem(placement: .navigationBarTrailing) {
+//                    Button("Save") {
+//                        let pigeon = Pigeon(name: pigeonName, color: selectedColor, breed: selectedBreed)
+//                        onSave(pigeon)
+//                        dismiss()
+//                    }
+//                    .disabled(pigeonName.isEmpty)
+//                }
+//            }
+//        }
+//    }
+//}
+
 #Preview {
-    ChickenGroupsView()
-        .environmentObject(ChickenDiaryManager())
+    PigeonGroupsView()
+        .environmentObject(PigeonDiaryManager())
 } 

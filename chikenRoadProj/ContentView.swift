@@ -1,14 +1,14 @@
 import SwiftUI
 
 struct ContentView: View {
-    @StateObject private var diaryManager = ChickenDiaryManager()
+    @StateObject private var diaryManager = PigeonDiaryManager()
     
     var body: some View {
         TabView {
-            ChickenGroupsView()
+            PigeonGroupsView()
                 .tabItem {
                     Image(systemName: "house.fill")
-                    Text("My Chickens")
+                    Text("My Pigeons")
                 }
             
             DiaryListView()

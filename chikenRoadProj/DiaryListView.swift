@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct DiaryListView: View {
-    @EnvironmentObject var diaryManager: ChickenDiaryManager
+    @EnvironmentObject var diaryManager: PigeonDiaryManager
     @State private var showingAddEntry = false
     @State private var selectedGroupId: UUID?
     @State private var selectedFilter: DiaryFilter = .all
@@ -26,36 +26,36 @@ struct DiaryListView: View {
     var body: some View {
         NavigationView {
             VStack {
-                if diaryManager.chickenGroups.isEmpty {
+                if diaryManager.pigeonGroups.isEmpty {
                     VStack(spacing: 20) {
                         Image(systemName: "book.fill")
                             .font(.system(size: 60))
-                            .foregroundColor(.orange)
+                            .foregroundColor(.blue)
                         
                         Text("No Diary Entries Yet!")
                             .font(.title2)
                             .fontWeight(.semibold)
                         
-                        Text("Create a chicken group first, then add your first diary entry!")
+                        Text("Create a pigeon group first, then add your first diary entry!")
                             .multilineTextAlignment(.center)
                             .foregroundColor(.secondary)
                         
-                        NavigationLink(destination: ChickenGroupsView()) {
+                        NavigationLink(destination: PigeonGroupsView()) {
                             HStack {
                                 Image(systemName: "house.fill")
-                                Text("Go to My Chickens")
+                                Text("Go to My Pigeons")
                             }
                             .font(.headline)
                             .foregroundColor(.white)
                             .padding()
-                            .background(Color.orange)
+                            .background(Color.blue)
                             .cornerRadius(10)
                         }
                     }
                     .padding()
                 } else {
                     List {
-                        if !diaryManager.chickenGroups.isEmpty {
+                        if !diaryManager.pigeonGroups.isEmpty {
                             Section {
                                 Picker("Filter", selection: $selectedFilter) {
                                     ForEach([DiaryFilter.all, .today, .thisWeek, .thisMonth], id: \.self) { filter in
@@ -74,7 +74,7 @@ struct DiaryListView: View {
                                 VStack(spacing: 16) {
                                     Image(systemName: "book.closed")
                                         .font(.system(size: 40))
-                                        .foregroundColor(.orange)
+                                        .foregroundColor(.blue)
                                     
                                     Text(emptyStateMessage)
                                         .font(.headline)
@@ -105,7 +105,7 @@ struct DiaryListView: View {
             }
             .navigationTitle("Diary")
             .toolbar {
-                if !diaryManager.chickenGroups.isEmpty {
+                if !diaryManager.pigeonGroups.isEmpty {
                     ToolbarItem(placement: .navigationBarTrailing) {
                         Button(action: {
                             showingAddEntry = true
@@ -137,9 +137,9 @@ struct DiaryListView: View {
     private var emptyStateSubtitle: String {
         switch selectedFilter {
         case .all:
-            return "Add your first diary entry to start tracking your chickens!"
+            return "Add your first diary entry to start tracking your pigeons!"
         case .today:
-            return "Add an entry to record today's chicken activities"
+            return "Add an entry to record today's pigeon activities"
         case .thisWeek:
             return "No entries recorded this week yet"
         case .thisMonth:
@@ -152,7 +152,7 @@ struct DiaryListView: View {
         
         // Filter by selected group if specified
         if let groupId = selectedGroupId {
-            entries = entries.filter { $0.chickenGroupId == groupId }
+            entries = entries.filter { $0.pigeonGroupId == groupId }
         }
         
         // Apply time filter
@@ -178,10 +178,10 @@ struct DiaryListView: View {
 
 struct DiaryEntryDetailRow: View {
     let entry: DiaryEntry
-    @EnvironmentObject var diaryManager: ChickenDiaryManager
+    @EnvironmentObject var diaryManager: PigeonDiaryManager
     
     private var groupName: String {
-        diaryManager.chickenGroups.first { $0.id == entry.chickenGroupId }?.name ?? "Unknown Group"
+        diaryManager.pigeonGroups.first { $0.id == entry.pigeonGroupId }?.name ?? "Unknown Group"
     }
     
     var body: some View {
@@ -209,9 +209,9 @@ struct DiaryEntryDetailRow: View {
                     }
                     
                     HStack {
-                        Image(systemName: "egg.fill")
-                            .foregroundColor(.yellow)
-                        Text("\(entry.eggsCount)")
+                        Image(systemName: "bird")
+                            .foregroundColor(.blue)
+                        Text("\(entry.chicksCount)")
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
@@ -241,10 +241,10 @@ struct DiaryEntryDetailRow: View {
 
 struct AddDiaryEntryView: View {
     @Environment(\.dismiss) var dismiss
-    @EnvironmentObject var diaryManager: ChickenDiaryManager
+    @EnvironmentObject var diaryManager: PigeonDiaryManager
     @State private var selectedGroupId: UUID?
     @State private var selectedMood: Mood = .happy
-    @State private var eggsCount = 0
+    @State private var chicksCount = 0
     @State private var notes = ""
     
     init(groupId: UUID? = nil) {
@@ -254,14 +254,14 @@ struct AddDiaryEntryView: View {
     var body: some View {
         NavigationView {
             Form {
-                Section(header: Text("Select Chicken Group")) {
-                    if diaryManager.chickenGroups.isEmpty {
-                        Text("No chicken groups available")
+                Section(header: Text("Select Pigeon Group")) {
+                    if diaryManager.pigeonGroups.isEmpty {
+                        Text("No pigeon groups available")
                             .foregroundColor(.secondary)
                     } else {
-                        Picker("Chicken Group", selection: $selectedGroupId) {
+                        Picker("Pigeon Group", selection: $selectedGroupId) {
                             Text("Select a group").tag(nil as UUID?)
-                            ForEach(diaryManager.chickenGroups) { group in
+                            ForEach(diaryManager.pigeonGroups) { group in
                                 Text(group.name).tag(group.id as UUID?)
                             }
                         }
@@ -269,7 +269,7 @@ struct AddDiaryEntryView: View {
                     }
                 }
                 
-                Section(header: Text("How are your chickens feeling?")) {
+                Section(header: Text("How are your pigeons feeling?")) {
                     Picker("Mood", selection: $selectedMood) {
                         ForEach(Mood.allCases, id: \.self) { mood in
                             HStack {
@@ -283,20 +283,20 @@ struct AddDiaryEntryView: View {
                     .pickerStyle(WheelPickerStyle())
                 }
                 
-                Section(header: Text("Eggs Collected")) {
-                    Stepper("\(eggsCount) egg\(eggsCount == 1 ? "" : "s")", value: $eggsCount, in: 0...50)
+                Section(header: Text("Chicks Hatched")) {
+                    Stepper("\(chicksCount) chick\(chicksCount == 1 ? "" : "s")", value: $chicksCount, in: 0...50)
                     
                     HStack {
-                        Image(systemName: "egg.fill")
-                            .foregroundColor(.yellow)
+                        Image(systemName: "bird")
+                            .foregroundColor(.blue)
                             .font(.title2)
-                        Text("\(eggsCount)")
+                        Text("\(chicksCount)")
                             .font(.title)
                             .fontWeight(.bold)
                     }
                     .frame(maxWidth: .infinity)
                     .padding()
-                    .background(Color.yellow.opacity(0.1))
+                    .background(Color.blue.opacity(0.1))
                     .cornerRadius(10)
                 }
                 
@@ -318,16 +318,16 @@ struct AddDiaryEntryView: View {
                     Button("Save") {
                         if let groupId = selectedGroupId {
                             let entry = DiaryEntry(
-                                chickenGroupId: groupId,
+                                pigeonGroupId: groupId,
                                 mood: selectedMood,
-                                eggsCount: eggsCount,
+                                chicksCount: chicksCount,
                                 notes: notes
                             )
                             diaryManager.addDiaryEntry(entry)
                             dismiss()
                         }
                     }
-                    .disabled(selectedGroupId == nil && diaryManager.chickenGroups.isEmpty)
+                    .disabled(selectedGroupId == nil && diaryManager.pigeonGroups.isEmpty)
                 }
             }
         }
@@ -346,5 +346,5 @@ struct AddDiaryEntryView: View {
 
 #Preview {
     DiaryListView()
-        .environmentObject(ChickenDiaryManager())
+        .environmentObject(PigeonDiaryManager())
 } 

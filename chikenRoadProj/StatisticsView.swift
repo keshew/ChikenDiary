@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct StatisticsView: View {
-    @EnvironmentObject var diaryManager: ChickenDiaryManager
+    @EnvironmentObject var diaryManager: PigeonDiaryManager
     @State private var selectedDate = Date()
     
     var body: some View {
@@ -32,7 +32,7 @@ struct StatisticsView: View {
                 .font(.title2)
                 .fontWeight(.semibold)
             
-            Text("Add some diary entries to see your chicken statistics!")
+            Text("Add some diary entries to see your pigeon statistics!")
                 .multilineTextAlignment(.center)
                 .foregroundColor(.secondary)
         }
@@ -45,10 +45,10 @@ struct StatisticsView: View {
             GridItem(.flexible(), spacing: 20)
         ], spacing: 16) {
             StatCard(
-                title: "Total Eggs",
-                value: "\(diaryManager.getTotalEggs())",
-                icon: "egg.fill",
-                color: .yellow
+                title: "Total Chicks",
+                value: "\(diaryManager.getTotalChicks())",
+                icon: "bird",
+                color: .blue
             )
             
             StatCard(
@@ -66,8 +66,8 @@ struct StatisticsView: View {
             )
             
             StatCard(
-                title: "Chicken Groups",
-                value: "\(diaryManager.chickenGroups.count)",
+                title: "Pigeon Groups",
+                value: "\(diaryManager.pigeonGroups.count)",
                 icon: "house.fill",
                 color: .blue
             )
@@ -99,7 +99,7 @@ struct StatisticsView: View {
                 .padding(.top)
             
             LazyVStack(spacing: 12) {
-                ForEach(diaryManager.chickenGroups) { group in
+                ForEach(diaryManager.pigeonGroups) { group in
                     GroupStatRow(group: group)
                 }
             }
@@ -288,15 +288,15 @@ struct CalendarDayView: View {
 }
 
 struct GroupStatRow: View {
-    let group: ChickenGroup
-    @EnvironmentObject var diaryManager: ChickenDiaryManager
+    let group: PigeonGroup
+    @EnvironmentObject var diaryManager: PigeonDiaryManager
     
     private var groupEntries: [DiaryEntry] {
         diaryManager.getEntriesForGroup(group.id)
     }
     
-    private var totalEggs: Int {
-        groupEntries.reduce(0) { $0 + $1.eggsCount }
+    private var totalChicks: Int {
+        groupEntries.reduce(0) { $0 + $1.chicksCount }
     }
     
     private var averageMood: Mood {
@@ -327,7 +327,7 @@ struct GroupStatRow: View {
                 Text(group.name)
                     .font(.headline)
                 
-                Text("\(group.chickens.count) chicken\(group.chickens.count == 1 ? "" : "s")")
+                Text("\(group.pigeons.count) pigeon\(group.pigeons.count == 1 ? "" : "s")")
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
@@ -336,9 +336,9 @@ struct GroupStatRow: View {
             
             VStack(alignment: .trailing, spacing: 4) {
                 HStack {
-                    Image(systemName: "egg.fill")
-                        .foregroundColor(.yellow)
-                    Text("\(totalEggs)")
+                    Image(systemName: "bird")
+                        .foregroundColor(.blue)
+                    Text("\(totalChicks)")
                         .font(.subheadline)
                         .fontWeight(.semibold)
                 }
@@ -370,5 +370,5 @@ struct GroupStatRow: View {
 
 #Preview {
     StatisticsView()
-        .environmentObject(ChickenDiaryManager())
+        .environmentObject(PigeonDiaryManager())
 } 
