@@ -11,11 +11,11 @@ enum Mood: String, CaseIterable, Codable {
     
     var icon: String {
         switch self {
-        case .veryHappy: return "face.smiling"
-        case .happy: return "face.smiling"
-        case .neutral: return "face.neutral"
-        case .sad: return "face.frown"
-        case .verySad: return "face.dashed"
+        case .veryHappy: return "vh"
+        case .happy: return "h"
+        case .neutral: return "n"
+        case .sad: return "s"
+        case .verySad: return "vs"
         }
     }
     
