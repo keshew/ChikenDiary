@@ -3,7 +3,7 @@ import SwiftUI
 struct GroupDetailView: View {
     @EnvironmentObject var diaryManager: PigeonDiaryManager
     @State var group: PigeonGroup
-
+    @Environment(\.presentationMode) var presentationMode
     @State private var showingAddEntry = false
     @State private var showingAddPigeon = false
 
@@ -21,7 +21,7 @@ struct GroupDetailView: View {
             VStack {
                 HStack {
                     Button(action: {
-                        showingAddPigeon = true
+                        presentationMode.wrappedValue.dismiss()
                     }) {
                         Image(.btnBack)
                             .resizable()
@@ -31,7 +31,7 @@ struct GroupDetailView: View {
                                     .foregroundStyle(Color(red: 165/255, green: 95/255, blue: 37/255))
                                     .shadow(radius: 2)
                             }
-                            .frame(width: 44, height: 44)
+                            .frame(width: 36, height: 36)
                     }
                     .offset(y: 20)
                     
@@ -450,16 +450,14 @@ struct DiaryEntryRow: View {
                     Image(systemName: entry.mood.icon)
                         .foregroundColor(moodColor(entry.mood))
                     Text(entry.mood.rawValue)
-                        .font(.caption)
-                        .foregroundColor(.secondary)
+                        .Pro(size: 13)
                 }
                 
                 HStack {
                     Image(systemName: "egg.fill")
                         .foregroundColor(.yellow)
                     Text("\(entry.chicksCount) chick\(entry.chicksCount == 1 ? "" : "s")")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
+                        .Pro(size: 10)
                 }
             }
             
@@ -467,13 +465,11 @@ struct DiaryEntryRow: View {
             
             VStack(alignment: .trailing, spacing: 4) {
                 Text(entry.date, style: .date)
-                    .font(.caption)
-                    .foregroundColor(.secondary)
+                    .Pro(size: 13)
                 
                 if !entry.notes.isEmpty {
                     Text(entry.notes)
-                        .font(.caption)
-                        .foregroundColor(.secondary)
+                        .Pro(size: 13)
                         .lineLimit(2)
                 }
             }

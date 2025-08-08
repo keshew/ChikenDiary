@@ -810,10 +810,14 @@ struct AddDiaryEntryView: View {
                                                             Picker("Mood", selection: $selectedMood) {
                                                                 ForEach(Mood.allCases, id: \.self) { mood in
                                                                     HStack {
-                                                                        Image(systemName: mood.icon)
-                                                                            .foregroundColor(moodColor(mood))
+                                                                        Image(mood.icon)
+                                                                            .resizable()
+                                                                            .frame(width: 15, height: 15)
                                                                         Text(mood.rawValue)
                                                                             .Pro(size: 17)
+                                                                        Image(mood.icon)
+                                                                            .resizable()
+                                                                            .frame(width: 15, height: 15)
                                                                     }
                                                                     .tag(mood)
                                                                 }
@@ -963,7 +967,7 @@ struct AddDiaryEntryView: View {
 
 
 #Preview {
-    AddDiaryEntryView()
+    DiaryListView()
         .environmentObject(PigeonDiaryManager())
 }
 
